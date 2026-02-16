@@ -18,16 +18,23 @@ export default function Signup() {
   const [loading, setLoading] = useState(false)
 
   const signUpWithEmail = async () => {
+    if (!email.trim() || !password) {
+      Alert.alert('Missing fields', 'Please enter both email and password.')
+      return
+    }
+
     setLoading(true)
     try {
       const { error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
       })
       if (error) throw error
+      console.info('Sign up successful. Email verification may be required.')
       Alert.alert('Success', 'Account created! Please check your email to verify.')
       navigation.replace('Login')
     } catch (err: any) {
+      console.error('Email sign-up failed', err)
       Alert.alert('Sign up failed', err.message || String(err))
     } finally {
       setLoading(false)
@@ -40,6 +47,7 @@ export default function Signup() {
       const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
       if (error) throw error
     } catch (err: any) {
+      console.error('Google sign-up failed', err)
       Alert.alert('Google sign-up failed', err.message || String(err))
     } finally {
       setLoading(false)
