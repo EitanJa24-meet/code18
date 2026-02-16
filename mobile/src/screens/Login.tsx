@@ -18,16 +18,23 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   const signInWithEmail = async () => {
+    if (!email.trim() || !password) {
+      Alert.alert('Missing fields', 'Please enter both email and password.')
+      return
+    }
+
     setLoading(true)
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       })
       if (error) throw error
-      // On success, navigate (adjust destination as needed)
+
+      console.info('Sign in successful')
       navigation.replace('Home')
     } catch (err: any) {
+      console.error('Email sign-in failed', err)
       Alert.alert('Sign in failed', err.message || String(err))
     } finally {
       setLoading(false)
@@ -39,8 +46,10 @@ export default function Login() {
       setLoading(true)
       const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
       if (error) throw error
-      // OAuth flow will redirect; handle session in your app entry point
+
+      console.info('Google OAuth flow started')
     } catch (err: any) {
+      console.error('Google sign-in failed', err)
       Alert.alert('Google sign-in failed', err.message || String(err))
     } finally {
       setLoading(false)
@@ -169,4 +178,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 })
-

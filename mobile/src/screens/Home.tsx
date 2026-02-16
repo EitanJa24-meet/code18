@@ -7,10 +7,13 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut()
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+
+      console.info('User logged out')
       navigation.replace('Login')
     } catch (err: any) {
-      console.error('Logout error:', err.message)
+      console.error('Logout error:', err)
     }
   }
 
